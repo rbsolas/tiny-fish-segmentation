@@ -162,4 +162,9 @@ cython_debug/
 #.idea/
 
 # venv
-./venv
+venv/*
+
+# training stuff
+*.pt 
+*.yaml
+data/*
