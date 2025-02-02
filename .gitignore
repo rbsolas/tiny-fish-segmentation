@@ -164,7 +164,9 @@ cython_debug/
 # venv
 venv/*
 
-# training stuff
+# training and other stuff
 *.pt 
 *.yaml
 data/*
+*.png
+*_[0-9]*e_[0-9]*b/*
