@@ -1,0 +1,6 @@
+train: ./train
+val: ./val
+test: ./test
+
+nc: 7
+names: ['wrecks/ruins', 'fish', 'reefs', 'aquatic plants', 'human divers', 'robots', 'sea-floor']
