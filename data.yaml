@@ -1,6 +1,6 @@
-train: ./train
-val: ./val
-test: ./test
+train: ./train/images
+val: ./val/images
+test: ./test/images
 
 nc: 7
 names: ['wrecks/ruins', 'fish', 'reefs', 'aquatic plants', 'human divers', 'robots', 'sea-floor']
