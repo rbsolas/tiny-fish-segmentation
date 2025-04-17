@@ -170,4 +170,4 @@ venv/*
 data/*
 *.png
 *_[0-9]*e_[0-9]*b/*
-global.py
+config.py
