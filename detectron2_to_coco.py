@@ -1,10 +1,38 @@
 from config import *
 
+import sys, argparse, json
+from datetime import datetime
 from sahi.utils.coco import Coco, CocoCategory, CocoImage, CocoAnnotation
 from sahi.utils.file import save_json
 from PIL import Image
-import glob, re
-import json
+
+'''
+Converts Detectron2 .json annotations (generated c/o of hoalarious on Github) to COCO .json format. Make sure that the dataset is structured as follows:
+    dataset_root/
+        train/
+            ...images...
+        test/
+            ...images...
+        valid/
+            ...images...    
+'''
+
+options = "yvdcut"
+long_options = ["year", "version", "description", "contributor",
+                "url", "time_created"]
+assert len(options) == len(long_options)
+defaults = {'year': datetime.today().strftime('%Y'),
+            'version': 1,
+            'description': "Made with SAHI COCO utilities",
+            'contributor': "",
+            'url': "https://public.roboflow.com/",
+            'time_created': datetime.today().strftime('%Y-%m-%d %H:%M:%S')}
+
+parser = argparse.ArgumentParser()
+for i in range(len(options)):
+    parser.add_argument(f"-{options[i]}", f"--{long_options[i]}", default=defaults[long_options[i]])
+
+args = parser.parse_args()
 
 coco = Coco()
 for i in range(2):  # Category id = 0 should be supercategory (i.e. 'underwater-objects')
@@ -15,8 +43,8 @@ for i in range(2):  # Category id = 0 should be supercategory (i.e. 'underwater-
 # Add annotated COCO image object to COCO object
 # After all images are added, export COCO object to JSON
 i = 0
-split=['train', 'test', 'val']
-for annot_file in [TRAIN_LABELS_PATH, TEST_LABELS_PATH, VAL_LABELS_PATH]:
+split=['train', 'test', 'valid']
+for annot_file in [DETECTRON_2_TRAIN_LABELS_PATH, DETECTRON_2_TEST_LABELS_PATH, DETECTRON_2_VAL_LABELS_PATH]:
     with open(annot_file, 'r') as file:
         data = json.load(file)
 
@@ -44,14 +72,13 @@ for annot_file in [TRAIN_LABELS_PATH, TEST_LABELS_PATH, VAL_LABELS_PATH]:
 
     with open(save_path, 'r+') as file:
         data = json.load(file)
-        data['info'] = {"year":"2025",
-                "version":"1",
-                "description":"Made with SAHI COCO utilities",
-                "contributor":"",
-                "url":"https://public.roboflow.com/object-detection/undefined",
-                "date_created":"2025-04-18T09:57:28+00:00"}
+        data['info'] = {"year":args.year,
+                "version":args.version,
+                "description":args.description,
+                "contributor":args.contributor,
+                "url":args.url,
+                "date_created":args.time_created}
         data['licenses'] = [{"id":1,"url":"https://creativecommons.org/licenses/by/4.0/","name":"CC BY 4.0"}]
-        # print("Number of keys: " + len(data))
         file.seek(0)
 
         json.dump(data, file)
@@ -60,10 +87,3 @@ for annot_file in [TRAIN_LABELS_PATH, TEST_LABELS_PATH, VAL_LABELS_PATH]:
     
     print("Output saved at: " + save_path)
     i += 1
-
-# for file in sorted(glob.glob(DATASET_PATH + '/*/*/*.jpg')):
-#     print(file)
-#     width, height = Image.open(file).size
-#     img = CocoImage(file_name= file.split('/')[-1], width=width, height=height)
-
-#     print(f"{width}, {height}")
