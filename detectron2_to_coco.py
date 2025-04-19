@@ -27,7 +27,10 @@ for annot_file in [TRAIN_LABELS_PATH, TEST_LABELS_PATH, VAL_LABELS_PATH]:
             # Has bbox and category id
             coco_img.add_annotation(
                 CocoAnnotation(
-                bbox=annot['bbox'],
+                # From [x1, y1, x2, y2] to [x, y, width height] 
+                bbox=[annot['bbox'][0], annot['bbox'][1], 
+                      annot['bbox'][2] - annot['bbox'][0], 
+                      annot['bbox'][3] - annot['bbox'][1]],
                 category_id=annot['category_id'] + 1, # Category 0 should be 'underwater-objects'
                 category_name=CATEGORIES[annot['category_id'] + 1]
                 )
@@ -43,7 +46,7 @@ for annot_file in [TRAIN_LABELS_PATH, TEST_LABELS_PATH, VAL_LABELS_PATH]:
         data = json.load(file)
         data['info'] = {"year":"2025",
                 "version":"1",
-                "description":"Made with SAHO COCO utilities",
+                "description":"Made with SAHI COCO utilities",
                 "contributor":"",
                 "url":"https://public.roboflow.com/object-detection/undefined",
                 "date_created":"2025-04-18T09:57:28+00:00"}
